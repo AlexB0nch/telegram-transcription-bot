@@ -1,0 +1,1 @@
+# Telegram Whisper Bot package

@@ -1,0 +1,19 @@
+version: "3.9"
+
+services:
+  telegram-whisper-bot:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: telegram-whisper-bot
+    restart: unless-stopped
+    env_file:
+      - .env
+    volumes:
+      # Persist Pyrogram session across container restarts
+      - ./sessions:/app/sessions
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
