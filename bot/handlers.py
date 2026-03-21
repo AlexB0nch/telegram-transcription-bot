@@ -15,7 +15,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 import httpx
-from pyrogram import Client, filters
+from pyrogram import Client, enums, filters
 from pyrogram.types import (
     CallbackQuery,
     InlineKeyboardButton,
@@ -130,8 +130,7 @@ def register_handlers(app: Client) -> None:
             job.step = "custom_language"
             state.save(chat_id, job)
             await cq.message.edit_text(
-                "Напиши код языка (например: `uk`, `pl`, `tr`, `it`, `zh`):",
-                parse_mode="markdown",
+                "Напиши код языка (например: uk, pl, tr, it, zh):",
             )
             await cq.answer()
             return
@@ -140,10 +139,9 @@ def register_handlers(app: Client) -> None:
         job.step = "speakers"
         state.save(chat_id, job)
         await cq.message.edit_text(
-            f"Язык: *{LANGUAGES.get(lang_code, lang_code)}*\n\n"
+            f"Язык: {LANGUAGES.get(lang_code, lang_code)}\n\n"
             "Сколько спикеров в записи?",
             reply_markup=_speakers_keyboard(),
-            parse_mode="markdown",
         )
         await cq.answer()
 
@@ -177,9 +175,8 @@ def register_handlers(app: Client) -> None:
             job.step = "speakers"
             state.save(chat_id, job)
             await message.reply_text(
-                f"Язык: *{lang_code}*\n\nСколько спикеров в записи?",
+                f"Язык: {lang_code}\n\nСколько спикеров в записи?",
                 reply_markup=_speakers_keyboard(),
-                parse_mode="markdown",
             )
             return
 
