@@ -7,6 +7,7 @@ from __future__ import annotations
 import logging
 import os
 import sys
+from pathlib import Path
 
 from dotenv import load_dotenv
 
@@ -27,6 +28,12 @@ def _optional(name: str, default: str) -> str:
     return os.getenv(name, default)
 
 
+def _default_session_dir() -> str:
+    if Path("/app/sessions").exists():
+        return "/app/sessions"
+    return "sessions"
+
+
 class Config:
     """Application-wide configuration loaded from environment variables."""
 
@@ -34,6 +41,15 @@ class Config:
     TELEGRAM_BOT_TOKEN: str = _require("TELEGRAM_BOT_TOKEN")
     TELEGRAM_API_ID: int    = int(_require("TELEGRAM_API_ID"))
     TELEGRAM_API_HASH: str  = _require("TELEGRAM_API_HASH")
+
+    # --- Access / Admin ---
+    # Comma-separated list of admin IDs or @usernames (optional: if empty, first user becomes admin)
+    ADMIN_IDS: list[str] = [
+        x.strip()
+        for x in (_optional("ADMIN_IDS", "") or _optional("ADMIN_ID", "")).split(",")
+        if x.strip()
+    ]
+    SESSION_DIR: str = _optional("SESSION_DIR", _default_session_dir())
 
     # --- AssemblyAI ---
     ASSEMBLYAI_API_KEY: str  = _require("ASSEMBLYAI_API_KEY")
